@@ -25,8 +25,8 @@ class RawDataDict(TypedDict):
     文章分數: int
     所有留言: List[CommentDict]
 
-# 處理完後的留言型態
-class ProcessedCommentDict(TypedDict):
+# 處理完後的文字型態
+class ProcessedTextDict(TypedDict):
     content: str
     time: str
 

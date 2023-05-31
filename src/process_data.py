@@ -10,12 +10,14 @@ def showRowData(dataframe: pd.DataFrame):
 # 將每個文章的留言物件陣列轉成一個字串陣列
 def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
     
+    # 檢查留言是否有效
     def checkCommentValid(comment: CommentDict):
         return (
             (comment['content'] != '' or comment['content'] != None) and
             (len(comment['ipdatetime'].split(' ')) > 1)
         )
     
+    # 移除留言中的 ip
     def removeIpInComment(ipdatetime: str):
         splitArray = ipdatetime.split(' ')
         return splitArray[1]
@@ -35,3 +37,24 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
     allComment.sort(key=lambda x: x['time'])
 
     return allComment
+
+
+# 將每個文章的標題加上內文變成一個字串
+def transferPostContentToArrayStr(postTitles: List[str], postContents: List[str], postDates: List[str]):
+    allPost = []
+    for postTitle, postContent, postDate in zip(postTitles, postContents, postDates):
+        
+        month = monthConverter(postDate.split(' ')[1])
+        day = postDate.split(' ')[2]
+
+        allPost.append({
+            "content": postTitle + postContent,
+            "time": f'{month}/{day}'
+        })
+
+    return allPost
+
+# 將月份轉成數字
+def monthConverter(month):
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    return months.index(month) + 1
