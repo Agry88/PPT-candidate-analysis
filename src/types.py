@@ -25,6 +25,11 @@ class RawDataDict(TypedDict):
     文章分數: int
     所有留言: List[CommentDict]
 
+# 處理完後的留言型態
+class ProcessedCommentDict(TypedDict):
+    content: str
+    time: str
+
 # 處理完後的資料型態
 # 將留言物件陣列轉成一個字串陣列
 # 標題加上內文變成一個字串

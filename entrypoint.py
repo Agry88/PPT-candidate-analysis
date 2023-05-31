@@ -1,5 +1,5 @@
 import pandas as pd
-from src.types import RawDataDict
+from src.types import RawDataDict, ProcessedCommentDict
 from src.process_data import showRowData, transferCommentToArrayStr
 
 def main():
@@ -11,6 +11,7 @@ def main():
     # print(showRowData(df[:1]))
 
     # 呼叫 transferCommentToArrayStr 函式，將每個文章的留言物件陣列轉成一個字串陣列
-    comments = transferCommentToArrayStr(df['所有留言'])
+    comments: list[ProcessedCommentDict] = transferCommentToArrayStr(df['所有留言'])
+    print(comments)
 
 main()
