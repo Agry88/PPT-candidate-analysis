@@ -1,6 +1,9 @@
 import pandas as pd
 from typing import List
-from src.types import CommentDict
+from src.types import CommentDict, ProcessedTextDict
+from snownlp import SnowNLP
+import multiprocessing
+
 
 # 顯示每個欄位的資料
 def showRowData(dataframe: pd.DataFrame):
@@ -25,13 +28,14 @@ def removeWords(content: str):
         
 
 # 將每個文章的留言物件陣列轉成一個字串陣列
-def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
+def transferCommentToArrayStr(postCommentsArray: List[List[str]], principal: str):
     
     # 檢查留言是否有效
     def checkCommentValid(comment: CommentDict):
         return (
             (comment['content'] != '' or comment['content'] != None) and
-            (len(comment['ipdatetime'].split(' ')) > 1)
+            (len(comment['ipdatetime'].split(' ')) > 1) and
+            (principal in comment['content'])
         )
     
     # 移除留言中的 ip
@@ -58,18 +62,20 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
 
 
 # 將每個文章的標題加上內文變成一個字串
-def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postContents: List[str], postDates: List[str]):
+def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postContents: List[str], postDates: List[str], principle:str):
     allPost = []
     for postAuthor, postTitle, postContent, postDate in zip(postAuthors, postTitles, postContents, postDates):
         
+        content = removeWords(postTitle + postContent)
         month = monthConverter(postDate.split(' ')[1])
         day = postDate.split(' ')[2]
 
-        allPost.append({
-            "author": postAuthor,
-            "content": removeWords(postTitle + postContent),
-            "time": f'{month}/{day}'
-        })
+        if principle in content:
+          allPost.append({
+              "author": postAuthor,
+              "content": removeWords(postTitle + postContent),
+              "time": f'{month}/{day}'
+          })
 
     return allPost
 
@@ -79,9 +85,29 @@ def monthConverter(month):
     return months.index(month) + 1
 
 def sentimentAnalysis(str: str):
-    from snownlp import SnowNLP
     s = SnowNLP(str)
     return s.sentiments
     
+# 取得特定候選人的資料
+def getPrincipalProcessedData(df: pd.DataFrame, principal: str):
+    # 呼叫 transferPostContentToArrayStr 函式，將每個文章的標題加上內文變成一個字串，確認含有候選人名字的文章
+    posts: list[ProcessedTextDict] = transferPostContentToArrayStr(df['作者'],df['標題'], df['內文'], df['日期'], principal)
 
-    
+    # 呼叫 transferCommentToArrayStr 函式，將每個文章的留言物件陣列轉成一個字串陣列，確認含有候選人名字的留言
+    comments: list[ProcessedTextDict] = transferCommentToArrayStr(df['所有留言'], principal)
+
+    # 將文章與留言合併成一個陣列
+    texts = posts + comments
+
+    # 呼叫 sentimentAnalysis 函式，將每個字串進行情緒分析
+    poolObj = multiprocessing.Pool()
+    sentiments = poolObj.map(sentimentAnalysis, [text['content'] for text in texts])
+    poolObj.close()
+
+    newDataframe = pd.DataFrame({
+        'author': [text['author'] for text in texts],
+        'content': [text['content'] for text in texts],
+        'time': [text['time'] for text in texts],
+        'sentiment': sentiments
+    })
+    return newDataframe

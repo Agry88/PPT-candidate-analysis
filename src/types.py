@@ -7,6 +7,7 @@ class CommentDict(TypedDict):
     user: str
     content: str
     ipdatetime: str
+    relatedPrinciple: str
 
 # 剛爬下來只有基本處理的資料型態
 class RawDataDict(TypedDict):

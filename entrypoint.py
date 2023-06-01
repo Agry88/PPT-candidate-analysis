@@ -1,6 +1,6 @@
 import pandas as pd
-from src.types import RawDataDict, ProcessedTextDict
-from src.process_data import transferCommentToArrayStr, transferPostContentToArrayStr, sentimentAnalysis
+from src.types import RawDataDict
+from src.process_data import getPrincipalProcessedData
 
 # 取得處理過的資料
 def getProcessedData():
@@ -10,29 +10,23 @@ def getProcessedData():
     # 呼叫 showRowData 函式，顯示第一筆資料
     # print(showRowData(df[:1]))
 
-    # 呼叫 transferPostContentToArrayStr 函式，將每個文章的標題加上內文變成一個字串
-    posts: list[ProcessedTextDict] = transferPostContentToArrayStr(df['作者'],df['標題'], df['內文'], df['日期'])
+    # 候選人(品牌)名單
+    principals = ["柯文哲","侯友宜","賴清德"]
 
-    # 呼叫 transferCommentToArrayStr 函式，將每個文章的留言物件陣列轉成一個字串陣列
-    comments: list[ProcessedTextDict] = transferCommentToArrayStr(df['所有留言'])
+    # 建立一個空的 dataframe，用來儲存處理過的資料
+    dataframe = pd.DataFrame(columns=['author', 'content', 'time', 'sentiment'])
+    for principal in principals:
+        # 呼叫 getPrincipalProcessedData 函式，取得特定候選人的資料
+        principalDataframe = getPrincipalProcessedData(df, principal)
 
-    texts = posts + comments
-    print(len(texts))
-    #sentiments = [sentimentAnalysis(text['content']) for text in texts]
-    #print(sentiments)
+        # 將處理過的資料合併成一個 dataframe
+        dataframe = pd.concat([dataframe, principalDataframe], ignore_index=True)
 
-    #processedDataframe = pd.DataFrame({
-    #    "author": [text['author'] for text in texts],
-    #    'content': [text['content'] for text in texts],
-    #    'time': [text['time'] for text in texts],
-    #    'sentiment': sentiments
-    #})
-
-
-    # processedDataframe.to_csv('static/processed_data.csv', index=False)
+    dataframe.to_csv('static/processed_data.csv', index=False)
 
 # 取得處理過的資料生成的圖表
 def getProcessedDataChart():
     pass
 
-getProcessedData()
+if __name__ == '__main__':
+  getProcessedData()
