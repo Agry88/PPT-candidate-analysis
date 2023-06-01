@@ -8,13 +8,13 @@ plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
 # plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
 plt.rcParams['axes.unicode_minus'] = False
 
-# 各品牌聲量長條圖
+# 各候選人聲量長條圖
 def drawPrincipalVolumeBar(dataframe: pd.DataFrame):
     dataframe['principal'].value_counts().plot(kind='bar',title='各品牌聲量長條圖', xlabel='品牌', ylabel='聲量')
     plt.show()
 
 
-# 各品牌聲量折線圖(趨勢圖)
+# 各候選人聲量折線圖(趨勢圖)
 def drawPrincipalVolumeLine(dataframe: pd.DataFrame):
     # 柯文哲
     dataframe[dataframe['principal'] == '柯文哲']['time'].value_counts().sort_index().plot(kind='line', color='red')
@@ -31,8 +31,9 @@ def drawPrincipalVolumeLine(dataframe: pd.DataFrame):
     plt.ylabel('聲量')
     plt.show()
 
+# 各候選人情緒長條圖
+def drawPrincipalSentimentBar(dataframe: pd.DataFrame):
+    principleSentiments = dataframe.groupby(['principal'])['sentiment'].sum()
+    principleSentiments.plot(kind='bar',title='各品牌情緒長條圖', xlabel='品牌', ylabel='情緒')
+    plt.show()
 
-def main(dataframe: pd.DataFrame):
-    
-    #
-    drawPrincipalVolumeBar(dataframe)
