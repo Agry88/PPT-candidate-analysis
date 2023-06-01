@@ -1,7 +1,13 @@
 import pandas as pd
 from src.types import RawDataDict
 from src.process_data import getPrincipalProcessedData
-from src.draw_data import drawPrincipalVolumeBar, drawPrincipalVolumeLine, drawPrincipalSentimentBar, drawPrincipalSentimentLine
+from src.draw_data import (
+    drawPrincipalVolumeBar,
+    drawPrincipalVolumeLine,
+    drawPrincipalSentimentBar,
+    drawPrincipalSentimentLine,
+    drawPrincipalVolumeAndSentimentScatter,
+)
 
 # 取得處理過的資料
 def getProcessedData():
@@ -47,7 +53,10 @@ def getProcessedDataChart():
     #drawPrincipalSentimentBar(df)
 
     # 各候選人情緒折線圖(趨勢圖)
-    drawPrincipalSentimentLine(df)
+    #drawPrincipalSentimentLine(df)
+
+    # 各候選人聲量與情緒比較圖(象限圖)
+    drawPrincipalVolumeAndSentimentScatter(df)
 
 if __name__ == '__main__':
   getProcessedDataChart()

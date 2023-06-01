@@ -53,3 +53,32 @@ def drawPrincipalSentimentLine(dataframe: pd.DataFrame):
     plt.xlabel('日期')
     plt.ylabel('情緒')
     plt.show()
+
+# 各候選人聲量與情緒比較圖(象限圖)
+def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
+    # 取得各候選人聲量與情緒
+    principleSentiments = dataframe.groupby(['principal'])['sentiment'].sum().sort_index()
+    principleVolumes = dataframe['principal'].value_counts().sort_index()
+
+    # 取得x軸與y軸最大值
+    minx = min(principleVolumes-100)
+    maxx = max(principleVolumes+100)
+    miny = min(principleSentiments-100)
+    maxy = max(principleSentiments+100)
+
+    # 繪製x軸與y軸
+    plt.axhline(miny + (maxy - miny) / 2, color='black')
+    plt.axvline(minx + (maxx - minx) / 2, color='black')
+
+    # 設定x軸與y軸範圍
+    plt.xlim(minx, maxx)
+    plt.ylim(miny, maxy)
+
+    # 繪製象限圖
+    plt.scatter(principleVolumes, principleSentiments)
+    for i in range(len(principleVolumes)):
+        plt.annotate(principleVolumes.index[i], (principleVolumes[i], principleSentiments[i]))
+    plt.title('各品牌聲量與情緒比較圖(象限圖)')
+    plt.xlabel('聲量')
+    plt.ylabel('情緒')
+    plt.show()
