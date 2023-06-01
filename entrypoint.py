@@ -1,6 +1,7 @@
 import pandas as pd
 from src.types import RawDataDict
 from src.process_data import getPrincipalProcessedData
+from src.draw_data import drawPrincipalVolumeBar, drawPrincipalVolumeLine
 
 # 取得處理過的資料
 def getProcessedData():
@@ -32,7 +33,15 @@ def getProcessedData():
 
 # 取得處理過的資料生成的圖表
 def getProcessedDataChart():
-    pass
+    # 讀取 csv 檔案，並將資料儲存至 dataframe
+    # 欄位有 author,content,time,sentiment,principal
+    df = pd.read_csv('static/processed_data.csv', parse_dates=['time'], date_parser=lambda x: pd.to_datetime(x, format="%m/%d"))
+    
+    # 各品牌聲量長條圖
+    #drawPrincipalVolumeBar(df)
+
+    # 各品牌聲量折線圖(趨勢圖)
+    drawPrincipalVolumeLine(df)
 
 if __name__ == '__main__':
-  getProcessedData()
+  getProcessedDataChart()
