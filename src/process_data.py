@@ -2,6 +2,7 @@ import pandas as pd
 from typing import List
 from src.types import CommentDict, ProcessedTextDict
 from snownlp import SnowNLP
+import jieba.analyse
 import multiprocessing
 
 
@@ -51,7 +52,8 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]], principal: str
               allComment.append({
                 "author": typedComment['user'],
                 "content": removeWords(typedComment['content']),
-                "time": removeIpInComment(typedComment['ipdatetime'])
+                "time": removeIpInComment(typedComment['ipdatetime']),
+                "principal": principal
               })
 
 
@@ -62,20 +64,26 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]], principal: str
 
 
 # 將每個文章的標題加上內文變成一個字串
-def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postContents: List[str], postDates: List[str], principle:str):
+def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postContents: List[str], postDates: List[str], principal:str):
     allPost = []
     for postAuthor, postTitle, postContent, postDate in zip(postAuthors, postTitles, postContents, postDates):
         
-        content = removeWords(postTitle + postContent)
+        rawContent = removeWords(postTitle + postContent)
         month = monthConverter(postDate.split(' ')[1])
         day = postDate.split(' ')[2]
 
-        if principle in content:
-          allPost.append({
-              "author": postAuthor,
-              "content": removeWords(postTitle + postContent),
-              "time": f'{month}/{day}'
-          })
+        # 將文章內容進行斷詞
+        contents = jieba.lcut(rawContent, cut_all=False)
+
+        # 斷詞後的內容中是否含有候選人名字，來確認文章是否有效  
+        for content in contents:
+          if principal in content:
+            allPost.append({
+                "author": postAuthor,
+                "content": removeWords(postTitle + postContent),
+                "time": f'{month}/{day}',
+                "principal": principal
+            })
 
     return allPost
 
@@ -108,6 +116,7 @@ def getPrincipalProcessedData(df: pd.DataFrame, principal: str):
         'author': [text['author'] for text in texts],
         'content': [text['content'] for text in texts],
         'time': [text['time'] for text in texts],
-        'sentiment': sentiments
+        'sentiment': sentiments,
+        'principal': [text['principal'] for text in texts]
     })
     return newDataframe

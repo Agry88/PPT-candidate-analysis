@@ -14,13 +14,19 @@ def getProcessedData():
     principals = ["柯文哲","侯友宜","賴清德"]
 
     # 建立一個空的 dataframe，用來儲存處理過的資料
-    dataframe = pd.DataFrame(columns=['author', 'content', 'time', 'sentiment'])
+    dataframe = pd.DataFrame(columns=['author', 'content', 'time', 'sentiment', 'principal'])
     for principal in principals:
         # 呼叫 getPrincipalProcessedData 函式，取得特定候選人的資料
         principalDataframe = getPrincipalProcessedData(df, principal)
 
+        # Log讓開發人員知道進度
+        print(f'{principal}的資料有{len(principalDataframe)}筆')
+
         # 將處理過的資料合併成一個 dataframe
         dataframe = pd.concat([dataframe, principalDataframe], ignore_index=True)
+
+    # 去除掉重複的資料
+    dataframe = dataframe.drop_duplicates()
 
     dataframe.to_csv('static/processed_data.csv', index=False)
 

@@ -31,6 +31,9 @@ class RawDataDict(TypedDict):
 class ProcessedTextDict(TypedDict):
     content: str
     time: str
+    author: str
+    sentiment: int
+    principal: str
 
 # 處理完後的資料型態
 # 將留言物件陣列轉成一個字串陣列
