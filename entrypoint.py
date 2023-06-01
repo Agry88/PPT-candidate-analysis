@@ -7,7 +7,8 @@ from src.draw_data import (
     drawPrincipalSentimentBar,
     drawPrincipalSentimentLine,
     drawPrincipalVolumeAndSentimentScatter,
-    drawPrincipalCustomKeywordLine
+    drawPrincipalCustomKeywordLine,
+    drawPrincipalCustomKeywordSentimentScatter
 )
 
 # 取得處理過的資料
@@ -60,7 +61,10 @@ def getProcessedDataChart():
     #drawPrincipalVolumeAndSentimentScatter(df)
 
     # 各候選人與關鍵字聲量比較折現圖
-    drawPrincipalCustomKeywordLine(df)
+    #drawPrincipalCustomKeywordLine(df)
+
+    # 各候選人與關鍵字情緒之知覺圖
+    drawPrincipalCustomKeywordSentimentScatter(df)
 
 if __name__ == '__main__':
   getProcessedDataChart()

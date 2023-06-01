@@ -33,20 +33,20 @@ def drawPrincipalVolumeLine(dataframe: pd.DataFrame):
 
 # 各候選人情緒長條圖
 def drawPrincipalSentimentBar(dataframe: pd.DataFrame):
-    principleSentiments = dataframe.groupby(['principal'])['sentiment'].sum()
+    principleSentiments = dataframe.groupby(['principal'])['sentiment'].mean()
     principleSentiments.plot(kind='bar',title='各品牌情緒長條圖', xlabel='品牌', ylabel='情緒')
     plt.show()
 
 # 各候選人情緒折線圖(趨勢圖)
 def drawPrincipalSentimentLine(dataframe: pd.DataFrame):
     # 柯文哲
-    dataframe[dataframe['principal'] == '柯文哲'].groupby(['time'])['sentiment'].sum().sort_index().plot(kind='line', color='red')
+    dataframe[dataframe['principal'] == '柯文哲'].groupby(['time'])['sentiment'].mean().sort_index().plot(kind='line', color='red')
 
     # 侯友宜
-    dataframe[dataframe['principal'] == '侯友宜'].groupby(['time'])['sentiment'].sum().sort_index().plot(kind='line', color='blue')
+    dataframe[dataframe['principal'] == '侯友宜'].groupby(['time'])['sentiment'].mean().sort_index().plot(kind='line', color='blue')
 
     # 賴清德
-    dataframe[dataframe['principal'] == '賴清德'].groupby(['time'])['sentiment'].sum().sort_index().plot(kind='line', color='green')
+    dataframe[dataframe['principal'] == '賴清德'].groupby(['time'])['sentiment'].mean().sort_index().plot(kind='line', color='green')
 
     plt.legend(['柯文哲', '侯友宜', '賴清德'])
     plt.title('各品牌情緒折線圖(趨勢圖)')
@@ -57,7 +57,7 @@ def drawPrincipalSentimentLine(dataframe: pd.DataFrame):
 # 各候選人聲量與情緒比較圖(象限圖)
 def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
     # 取得各候選人聲量與情緒
-    principleSentiments = dataframe.groupby(['principal'])['sentiment'].sum().sort_index()
+    principleSentiments = dataframe.groupby(['principal'])['sentiment'].mean().sort_index()
     principleVolumes = dataframe['principal'].value_counts().sort_index()
 
     # 取得x軸與y軸最大值
@@ -111,6 +111,49 @@ def drawPrincipalCustomKeywordLine(dataframe: pd.DataFrame):
     plt.ylabel('聲量')
     plt.show()
 
+# 各候選人與關鍵字情緒之知覺圖
+def drawPrincipalCustomKeywordSentimentScatter(dataframe: pd.DataFrame):
+    
+    # 需要先將資料複製出來，避免影響原資料
+    copyDataframe = dataframe.copy()
+
+    # 自訂關鍵字
+    customKeywords = ["賄選", "台獨", "民調", "造勢", "連任", "總統大選", "黨內聲量", "民意聲量", "網路聲量"]
+
+    # 需要做一個新的dataFrame，列出每個候選人與關鍵字的情緒分數
+    principleCustomKeywordSentiments = pd.DataFrame(columns=['principal', 'keyword', 'sentiment'])
+    for customKeyword in customKeywords:
+        principleCustomKeywordSentiments = pd.concat([principleCustomKeywordSentiments, copyDataframe[copyDataframe['content'].str.contains(customKeyword)][['principal', 'sentiment']].assign(keyword=customKeyword)], ignore_index=True)
+
+    # 取得各候選人與關鍵字情緒
+    principleCustomKeywordSentiments = principleCustomKeywordSentiments.groupby(['principal', 'keyword'])['sentiment'].mean().sort_index().unstack()
+
+    # 填補NaN值
+    principleCustomKeywordSentiments = principleCustomKeywordSentiments.fillna(0)
+    print(principleCustomKeywordSentiments)
+
+    # 繪製象限圖
+    for customKeyword1 in principleCustomKeywordSentiments.columns:
+        for customKeyword2 in principleCustomKeywordSentiments.columns:
+            if(customKeyword1 == customKeyword2):
+                continue
+            # 取得x軸與y軸最大值
+            minx = min(principleCustomKeywordSentiments[customKeyword1]-100)
+            maxx = max(principleCustomKeywordSentiments[customKeyword1]+100)
+            miny = min(principleCustomKeywordSentiments[customKeyword2]-100)
+            maxy = max(principleCustomKeywordSentiments[customKeyword2]+100)
+
+            # 繪製x軸與y軸
+            plt.axhline(miny + (maxy - miny) / 2, color='black')
+            plt.axvline(minx + (maxx - minx) / 2, color='black')
+
+            plt.scatter(principleCustomKeywordSentiments[customKeyword1], principleCustomKeywordSentiments[customKeyword2])
+            for i in range(len(principleCustomKeywordSentiments)):
+                plt.annotate(principleCustomKeywordSentiments.index[i], (principleCustomKeywordSentiments[customKeyword1][i], principleCustomKeywordSentiments[customKeyword2][i]))
+            plt.title(f'各候選人與關鍵字{customKeyword1}與{customKeyword2}情緒之知覺圖')
+            plt.xlabel(customKeyword1)
+            plt.ylabel(customKeyword2)
+            plt.show()
 
 
 
