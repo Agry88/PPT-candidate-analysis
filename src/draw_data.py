@@ -82,3 +82,37 @@ def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
     plt.xlabel('聲量')
     plt.ylabel('情緒')
     plt.show()
+
+# 各候選人與關鍵字聲量比較折現圖
+def drawPrincipalCustomKeywordLine(dataframe: pd.DataFrame):
+    
+    # 複製資料避免影響原資料
+    copyDataframe = dataframe.copy()
+
+    # 自訂關鍵字
+    customKeywords = ["賄選", "台獨", "民調", "造勢", "連任", "總統大選", "黨內聲量", "民意聲量", "網路聲量"]
+
+    # 為每列標註是否包含自訂關鍵字，有的話標註含有的關鍵字
+    for customKeyword in customKeywords:
+        copyDataframe[customKeyword] = copyDataframe['content'].str.contains(customKeyword)
+
+    # 取得各候選人與關鍵字聲量
+    principleCustomKeywordVolumes = copyDataframe.groupby(['principal'])[customKeywords].sum().sort_index()
+
+    # 候選人名單
+    principles = ['柯文哲', '侯友宜', '賴清德']
+
+    # 繪製折線圖
+    for principal in principles:
+        plt.plot(customKeywords, principleCustomKeywordVolumes.loc[principal], marker='o')
+    plt.legend(principles)
+    plt.title('各候選人與關鍵字聲量比較折線圖')
+    plt.xlabel('候選人')
+    plt.ylabel('聲量')
+    plt.show()
+
+
+
+
+    
+    
