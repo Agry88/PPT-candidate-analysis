@@ -45,6 +45,7 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
             typedComment: CommentDict = comment
             if checkCommentValid(typedComment):
               allComment.append({
+                "author": typedComment['user'],
                 "content": removeWords(typedComment['content']),
                 "time": removeIpInComment(typedComment['ipdatetime'])
               })
@@ -57,14 +58,15 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
 
 
 # 將每個文章的標題加上內文變成一個字串
-def transferPostContentToArrayStr(postTitles: List[str], postContents: List[str], postDates: List[str]):
+def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postContents: List[str], postDates: List[str]):
     allPost = []
-    for postTitle, postContent, postDate in zip(postTitles, postContents, postDates):
+    for postAuthor, postTitle, postContent, postDate in zip(postAuthors, postTitles, postContents, postDates):
         
         month = monthConverter(postDate.split(' ')[1])
         day = postDate.split(' ')[2]
 
         allPost.append({
+            "author": postAuthor,
             "content": removeWords(postTitle + postContent),
             "time": f'{month}/{day}'
         })
@@ -75,3 +77,11 @@ def transferPostContentToArrayStr(postTitles: List[str], postContents: List[str]
 def monthConverter(month):
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return months.index(month) + 1
+
+def sentimentAnalysis(str: str):
+    from snownlp import SnowNLP
+    s = SnowNLP(str)
+    return s.sentiments
+    
+
+    

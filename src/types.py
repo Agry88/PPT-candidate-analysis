@@ -2,6 +2,7 @@ from typing import TypedDict, List
 
 # 宣告原本的留言型態
 class CommentDict(TypedDict):
+    author: str
     type: str
     user: str
     content: str
