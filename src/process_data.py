@@ -7,6 +7,23 @@ def showRowData(dataframe: pd.DataFrame):
     for col in dataframe.columns:
         print(f'{col}：{dataframe[col].iloc[0]}\n')
 
+# #資料清理，無意義字元去除
+def removeWords(content: str):
+    removeword = ['span','class','f3','https','imgur','h1','_   blank','href','rel',
+                'nofollow','target','cdn','cgi','b4','jpg','hl','b1','f5','f4',
+                'goo.gl','f2','email','map','f1','f6','__cf___','data','bbs'
+                'html','cf','f0','b2','b3','b5','b6','原文內容','原文連結','作者'
+                '標題','時間','看板','<','>','，','。','？','—','閒聊','・','/',
+                ' ','=','\"','\n','」','「','！','[',']','：','‧','╦','╔','╗','║'
+                ,'╠','╬','╬',':','╰','╩','╯','╭','╮','│','╪','─','《','》','_'
+                ,'.','、','（','）','　','*','※','~','○','”','“','～','@','＋','\r'
+                ,'▁',')','(','-','═','?',',','!','…','&',';','『','』','#','＝'
+                ,'\l']
+    for word in removeword:
+        content = content.replace(word,'')
+    return content
+        
+
 # 將每個文章的留言物件陣列轉成一個字串陣列
 def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
     
@@ -28,7 +45,7 @@ def transferCommentToArrayStr(postCommentsArray: List[List[str]]):
             typedComment: CommentDict = comment
             if checkCommentValid(typedComment):
               allComment.append({
-                "content": typedComment['content'],
+                "content": removeWords(typedComment['content']),
                 "time": removeIpInComment(typedComment['ipdatetime'])
               })
 
@@ -48,7 +65,7 @@ def transferPostContentToArrayStr(postTitles: List[str], postContents: List[str]
         day = postDate.split(' ')[2]
 
         allPost.append({
-            "content": postTitle + postContent,
+            "content": removeWords(postTitle + postContent),
             "time": f'{month}/{day}'
         })
 

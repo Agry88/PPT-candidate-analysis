@@ -1,6 +1,6 @@
 import pandas as pd
 from src.types import RawDataDict, ProcessedTextDict
-from src.process_data import showRowData, transferCommentToArrayStr, transferPostContentToArrayStr
+from src.process_data import transferCommentToArrayStr, transferPostContentToArrayStr
 
 def main():
     
