@@ -155,7 +155,53 @@ def drawPrincipalCustomKeywordSentimentScatter(dataframe: pd.DataFrame):
             plt.ylabel(customKeyword2)
             plt.show()
 
-
-
+def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
     
+    # 需要先將資料複製出來，避免影響原資料
+    copyDataframe = dataframe.copy()
+
+    # 自訂關鍵字
+    customKeywords = ["賄選", "台獨", "民調", "造勢", "連任", "總統大選", "黨內聲量", "民意聲量", "網路聲量"]
+
+    # 計算每一個關鍵字的聲量
+    for keyword in customKeywords:
+      # 如果留言內容含keyword字詞，就計數１
+      copyDataframe[keyword] = copyDataframe['content'].apply(lambda x: 1 if keyword in x else 0)
+    
+    #將聲量欄位名加入特徵值list，以利後續讀取資料使用
+    copyDataframe['聲量'] = 1
+    customKeywords.append("聲量") 
+
+    # 計算每一使用者的聲量
+    volume_cluster = copyDataframe.groupby(['author'], as_index=False)[customKeywords].sum()
+
+    volume_cluster = volume_cluster.set_index(['author', '聲量'])
+
+    # 機器學習自動分群
+    # 方法一：肘部法則
+    from sklearn.cluster import KMeans
+    distortions = []
+    for k in range(1,15):
+      kmeanModel = KMeans(n_clusters=k,random_state=1, n_init='auto').fit(volume_cluster)
+      distortions.append(kmeanModel.inertia_) #Inertia計算群內所有點到該群的中心的距離的總和。
+
+    plt.figure(figsize=(16,8))
+    plt.plot(range(1,15), distortions, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Distortion')
+    plt.title('The Elbow Method showing the optimal k')
+    plt.show()
+
+    # 方法二：輪廓分析法
+    # silhouette_score，越大越好
+    from sklearn.metrics import silhouette_score
+
+    for k in range(2,15):
+        kmeanModel = KMeans(n_clusters=k,random_state=1, n_init='auto').fit(volume_cluster)
+        silhouette_avg = silhouette_score(volume_cluster,kmeanModel.labels_)
+      
+        print('Silhouette Score for %i Clusters: %0.4f' % (k, silhouette_avg))
+
+
+    # 等待瓊文回覆分群應該多少比較好
     
