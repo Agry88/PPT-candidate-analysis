@@ -79,7 +79,7 @@ def transferPostContentToArrayStr(postAuthors ,postTitles: List[str], postConten
         for content in contents:
           if principal in content:
             allPost.append({
-                "author": postAuthor,
+                "author": postAuthor.split('(')[0].strip(),
                 "content": removeWords(postTitle + postContent),
                 "time": f'{month}/{day}',
                 "principal": principal
