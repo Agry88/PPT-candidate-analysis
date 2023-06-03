@@ -185,12 +185,12 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
       kmeanModel = KMeans(n_clusters=k,random_state=1, n_init='auto').fit(volume_cluster)
       distortions.append(kmeanModel.inertia_) #Inertia計算群內所有點到該群的中心的距離的總和。
 
-    plt.figure(figsize=(16,8))
-    plt.plot(range(1,15), distortions, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Distortion')
-    plt.title('The Elbow Method showing the optimal k')
-    plt.show()
+    #plt.figure(figsize=(16,8))
+    #plt.plot(range(1,15), distortions, 'bx-')
+    #plt.xlabel('k')
+    #plt.ylabel('Distortion')
+    #plt.title('The Elbow Method showing the optimal k')
+    #plt.show()
 
     # 方法二：輪廓分析法
     # silhouette_score，越大越好
@@ -203,5 +203,33 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
         print('Silhouette Score for %i Clusters: %0.4f' % (k, silhouette_avg))
 
 
-    # 等待瓊文回覆分群應該多少比較好
-    
+    # 最後決定分成4群
+    clustering = KMeans(n_clusters=4,random_state=1, n_init='auto').fit(volume_cluster)  
+
+    # 將分群結果加入原始資料
+    volume_cluster['cluster'] = clustering.labels_
+
+    # 設定過渡參數【人數】，後續用來統計每一群的市場人數
+    volume_cluster['人數'] = 1
+
+    # 找出每一個群體的特徵加總
+    volume_cluster_group= volume_cluster.groupby(['cluster'], as_index=False).sum()
+    print(volume_cluster_group)
+
+    # 繪製群體人數圖
+    plt.bar(volume_cluster_group['cluster'], volume_cluster_group['人數'])
+    plt.title('各群體人數')
+    plt.xlabel('群體')
+    plt.ylabel('人數')
+    plt.show()
+
+    # 繪製群體各關鍵字聲量圖
+    for keyword in customKeywords:
+        if keyword not in volume_cluster_group.columns:
+            continue
+        plt.plot(volume_cluster_group['cluster'], volume_cluster_group[keyword], label=keyword)
+    plt.legend()
+    plt.title(f'各群體關鍵字聲量')
+    plt.xlabel('群體')
+    plt.ylabel('聲量')
+    plt.show()
