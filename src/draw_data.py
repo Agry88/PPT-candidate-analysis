@@ -10,7 +10,9 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # 各候選人聲量長條圖
 def drawPrincipalVolumeBar(dataframe: pd.DataFrame):
-    dataframe['principal'].value_counts().plot(kind='bar',title='各候選人聲量長條圖', xlabel='候選人', ylabel='聲量')
+    chart_title = '各候選人聲量長條圖'
+    dataframe['principal'].value_counts().plot(kind='bar',title=chart_title, xlabel='候選人', ylabel='聲量')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
 
@@ -25,16 +27,20 @@ def drawPrincipalVolumeLine(dataframe: pd.DataFrame):
     # 賴清德
     dataframe[dataframe['principal'] == '賴清德']['time'].value_counts().sort_index().plot(kind='line', color='green')
 
+    chart_title = '各候選人聲量折線圖(趨勢圖)'
     plt.legend(['柯文哲', '侯友宜', '賴清德'])
-    plt.title('各候選人聲量折線圖(趨勢圖)')
+    plt.title(chart_title)
     plt.xlabel('日期')
     plt.ylabel('聲量')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
 # 各候選人情緒長條圖
 def drawPrincipalSentimentBar(dataframe: pd.DataFrame):
     principleSentiments = dataframe.groupby(['principal'])['sentiment'].mean()
-    principleSentiments.plot(kind='bar',title='各候選人情緒長條圖', xlabel='候選人', ylabel='情緒')
+    chart_title = '各候選人情緒長條圖'
+    principleSentiments.plot(kind='bar',title=chart_title, xlabel='候選人', ylabel='情緒')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
 # 各候選人情緒折線圖(趨勢圖)
@@ -48,10 +54,12 @@ def drawPrincipalSentimentLine(dataframe: pd.DataFrame):
     # 賴清德
     dataframe[dataframe['principal'] == '賴清德'].groupby(['time'])['sentiment'].mean().sort_index().plot(kind='line', color='green')
 
+    chart_title = '各候選人情緒折線圖(趨勢圖)'
     plt.legend(['柯文哲', '侯友宜', '賴清德'])
     plt.title('各候選人情緒折線圖(趨勢圖)')
     plt.xlabel('日期')
     plt.ylabel('情緒')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
 # 各候選人聲量與情緒比較圖(象限圖)
@@ -78,9 +86,11 @@ def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
     plt.scatter(principleVolumes, principleSentiments)
     for i in range(len(principleVolumes)):
         plt.annotate(principleVolumes.index[i], (principleVolumes[i], principleSentiments[i]))
+    chart_title = '各候選人聲量與情緒比較圖(象限圖)'
     plt.title('各候選人聲量與情緒比較圖(象限圖)')
     plt.xlabel('聲量')
     plt.ylabel('情緒')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
 # 各候選人與關鍵字聲量比較折現圖
@@ -105,10 +115,13 @@ def drawPrincipalCustomKeywordLine(dataframe: pd.DataFrame):
     # 繪製折線圖
     for principal in principles:
         plt.plot(customKeywords, principleCustomKeywordVolumes.loc[principal], marker='o')
+    chart_title = '各候選人與關鍵字聲量比較折線圖'
     plt.legend(principles)
     plt.title('各候選人與關鍵字聲量比較折線圖')
     plt.xlabel('候選人')
     plt.ylabel('聲量')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
+
     plt.show()
 
 # 各候選人與關鍵字情緒之知覺圖
@@ -150,9 +163,11 @@ def drawPrincipalCustomKeywordSentimentScatter(dataframe: pd.DataFrame):
             plt.scatter(principleCustomKeywordSentiments[customKeyword1], principleCustomKeywordSentiments[customKeyword2])
             for i in range(len(principleCustomKeywordSentiments)):
                 plt.annotate(principleCustomKeywordSentiments.index[i], (principleCustomKeywordSentiments[customKeyword1][i], principleCustomKeywordSentiments[customKeyword2][i]))
-            plt.title(f'各候選人與關鍵字{customKeyword1}與{customKeyword2}情緒之知覺圖')
+            chart_title = f'各候選人與關鍵字{customKeyword1}與{customKeyword2}情緒之知覺圖'
+            plt.title(chart_title)
             plt.xlabel(customKeyword1)
             plt.ylabel(customKeyword2)
+            plt.savefig(f'./static/result_charts/{chart_title}.png')
             plt.show()
 
 def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
@@ -185,11 +200,13 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
       kmeanModel = KMeans(n_clusters=k,random_state=1, n_init='auto').fit(volume_cluster)
       distortions.append(kmeanModel.inertia_) #Inertia計算群內所有點到該群的中心的距離的總和。
 
+    chart_title = '肘部法則分群圖'
     plt.figure(figsize=(16,8))
     plt.plot(range(1,15), distortions, 'bx-')
     plt.xlabel('k')
     plt.ylabel('Distortion')
-    plt.title('The Elbow Method showing the optimal k')
+    plt.title(chart_title)
+    plt.savefig(f"./static/result_charts/{chart_title}.png")
     plt.show()
 
     # 方法二：輪廓分析法
@@ -217,10 +234,12 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
     print(volume_cluster_group)
 
     # 繪製群體人數圖
+    chart_title = '各群體人數'
     plt.bar(volume_cluster_group['cluster'], volume_cluster_group['人數'])
-    plt.title('各群體人數')
+    plt.title(chart_title)
     plt.xlabel('群體')
     plt.ylabel('人數')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
 
     # 繪製群體各關鍵字聲量圖
@@ -228,8 +247,10 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
         if keyword not in volume_cluster_group.columns:
             continue
         plt.plot(volume_cluster_group['cluster'], volume_cluster_group[keyword], label=keyword)
+    chart_title = '各群體關鍵字聲量'
     plt.legend()
-    plt.title(f'各群體關鍵字聲量')
+    plt.title(chart_title)
     plt.xlabel('群體')
     plt.ylabel('聲量')
+    plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
