@@ -71,8 +71,8 @@ def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
     # 取得x軸與y軸最大值
     minx = min(principleVolumes-100)
     maxx = max(principleVolumes+100)
-    miny = min(principleSentiments-100)
-    maxy = max(principleSentiments+100)
+    miny = min(principleSentiments-0.1)
+    maxy = max(principleSentiments+0.1)
 
     # 繪製x軸與y軸
     plt.axhline(miny + (maxy - miny) / 2, color='black')
@@ -83,6 +83,8 @@ def drawPrincipalVolumeAndSentimentScatter(dataframe: pd.DataFrame):
     plt.ylim(miny, maxy)
 
     # 繪製象限圖
+    print(principleVolumes)
+    print(principleSentiments)
     plt.scatter(principleVolumes, principleSentiments)
     for i in range(len(principleVolumes)):
         plt.annotate(principleVolumes.index[i], (principleVolumes[i], principleSentiments[i]))

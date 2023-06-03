@@ -62,7 +62,7 @@ def getProcessedDataChart():
     #drawPrincipalSentimentLine(df)
 
     # 各候選人聲量與情緒比較圖(象限圖)
-    #drawPrincipalVolumeAndSentimentScatter(df)
+    drawPrincipalVolumeAndSentimentScatter(df)
 
     # 各候選人與關鍵字聲量比較折現圖
     #drawPrincipalCustomKeywordLine(df)
@@ -71,7 +71,7 @@ def getProcessedDataChart():
     #drawPrincipalCustomKeywordSentimentScatter(df)
 
     # 自訂關鍵字聲量與情緒分群比較折線圖
-    drawPrincipalCustomKeywordSegimentsGroupLine(df)
+    #drawPrincipalCustomKeywordSegimentsGroupLine(df)
 
 if __name__ == '__main__':
   #getProcessedData()
