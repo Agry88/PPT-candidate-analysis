@@ -120,3 +120,38 @@ def getPrincipalProcessedData(df: pd.DataFrame, principal: str):
         'principal': [text['principal'] for text in texts]
     })
     return newDataframe
+
+def replacePrincipalNickname(df: pd.DataFrame):
+    needReplaceColumns = ['標題', '內文', '所有留言']
+
+    for col in needReplaceColumns:
+        df[col] = df[col].str.replace('賴功德', '賴清德')
+        df[col] = df[col].str.replace('賴神', '賴清德')
+        df[col] = df[col].str.replace('穆罕清德', '賴清德')
+        df[col] = df[col].str.replace('賴半天', '賴清德')
+        df[col] = df[col].str.replace('賴彈性', '賴清德')
+        df[col] = df[col].str.replace('台獨金孫', '賴清德')
+        df[col] = df[col].str.replace('Lie 神', '賴清德')
+
+        df[col] = df[col].str.replace('柯P', '柯文哲')
+        df[col] = df[col].str.replace('可達鴉', '柯文哲')
+        df[col] = df[col].str.replace('柯p', '柯文哲')
+        df[col] = df[col].str.replace('科文哲', '柯文哲')
+        df[col] = df[col].str.replace('蚵蚊蜇', '柯文哲')
+        df[col] = df[col].str.replace('亞斯伯哲', '柯文哲')
+        df[col] = df[col].str.replace('柯師父', '柯文哲')
+        df[col] = df[col].str.replace('柯seafood', '柯文哲')
+        df[col] = df[col].str.replace('柯阿北', '柯文哲')
+        df[col] = df[col].str.replace('火影柯', '柯文哲')
+
+        df[col] = df[col].str.replace('侯副', '侯友宜')
+        df[col] = df[col].str.replace('阿猴', '侯友宜')
+        df[col] = df[col].str.replace('封城侯', '侯友宜')
+        df[col] = df[col].str.replace('猴友誼', '侯友宜')
+        df[col] = df[col].str.replace('侯Sir', '侯友宜')
+        df[col] = df[col].str.replace('侯導', '侯友宜')
+        df[col] = df[col].str.replace('猴導', '侯友宜')
+        df[col] = df[col].str.replace('hohoGPT', '侯友宜')
+        df[col] = df[col].str.replace('HoHo GPT', '侯友宜')
+
+    return df

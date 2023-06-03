@@ -1,6 +1,6 @@
 import pandas as pd
 from src.types import RawDataDict
-from src.process_data import getPrincipalProcessedData
+from src.process_data import getPrincipalProcessedData, replacePrincipalNickname
 from src.draw_data import (
     drawPrincipalVolumeBar,
     drawPrincipalVolumeLine,
@@ -19,6 +19,9 @@ def getProcessedData():
 
     # 呼叫 showRowData 函式，顯示第一筆資料
     # print(showRowData(df[:1]))
+
+    # 候選人綽號替換
+    df = replacePrincipalNickname(df)
 
     # 候選人(品牌)名單
     principals = ["柯文哲","侯友宜","賴清德"]
@@ -71,5 +74,5 @@ def getProcessedDataChart():
     drawPrincipalCustomKeywordSegimentsGroupLine(df)
 
 if __name__ == '__main__':
-  #getProcessedData()
-  getProcessedDataChart()
+  getProcessedData()
+  #getProcessedDataChart()
