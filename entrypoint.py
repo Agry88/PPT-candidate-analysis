@@ -74,5 +74,5 @@ def getProcessedDataChart():
     drawPrincipalCustomKeywordSegimentsGroupLine(df)
 
 if __name__ == '__main__':
-  getProcessedData()
-  #getProcessedDataChart()
+  #getProcessedData()
+  getProcessedDataChart()

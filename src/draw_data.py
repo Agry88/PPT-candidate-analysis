@@ -185,12 +185,12 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
       kmeanModel = KMeans(n_clusters=k,random_state=1, n_init='auto').fit(volume_cluster)
       distortions.append(kmeanModel.inertia_) #Inertia計算群內所有點到該群的中心的距離的總和。
 
-    #plt.figure(figsize=(16,8))
-    #plt.plot(range(1,15), distortions, 'bx-')
-    #plt.xlabel('k')
-    #plt.ylabel('Distortion')
-    #plt.title('The Elbow Method showing the optimal k')
-    #plt.show()
+    plt.figure(figsize=(16,8))
+    plt.plot(range(1,15), distortions, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Distortion')
+    plt.title('The Elbow Method showing the optimal k')
+    plt.show()
 
     # 方法二：輪廓分析法
     # silhouette_score，越大越好
