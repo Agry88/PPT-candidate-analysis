@@ -13,6 +13,8 @@ from src.draw_data import (
 )
 
 # 取得處理過的資料
+
+
 def getProcessedData():
     # 讀取 csv 檔案，並將資料儲存至 dataframe
     df: RawDataDict = pd.read_csv('static/crawl_data.csv')
@@ -24,10 +26,11 @@ def getProcessedData():
     df = replacePrincipalNickname(df)
 
     # 候選人(品牌)名單
-    principals = ["柯文哲","侯友宜","賴清德"]
+    principals = ["柯文哲", "侯友宜", "賴清德"]
 
     # 建立一個空的 dataframe，用來儲存處理過的資料
-    dataframe = pd.DataFrame(columns=['author', 'content', 'time', 'sentiment', 'principal'])
+    dataframe = pd.DataFrame(
+        columns=['author', 'content', 'time', 'sentiment', 'principal'])
     for principal in principals:
         # 呼叫 getPrincipalProcessedData 函式，取得特定候選人的資料
         principalDataframe = getPrincipalProcessedData(df, principal)
@@ -36,7 +39,8 @@ def getProcessedData():
         print(f'{principal}的資料有{len(principalDataframe)}筆')
 
         # 將處理過的資料合併成一個 dataframe
-        dataframe = pd.concat([dataframe, principalDataframe], ignore_index=True)
+        dataframe = pd.concat(
+            [dataframe, principalDataframe], ignore_index=True)
 
     # 去除掉重複的資料
     dataframe = dataframe.drop_duplicates()
@@ -44,35 +48,39 @@ def getProcessedData():
     dataframe.to_csv('static/processed_data.csv', index=False)
 
 # 取得處理過的資料生成的圖表
+
+
 def getProcessedDataChart():
     # 讀取 csv 檔案，並將資料儲存至 dataframe
     # 欄位有 author,content,time,sentiment,principal
-    df = pd.read_csv('static/processed_data.csv', parse_dates=['time'], date_format="%m/%d")
+    df = pd.read_csv('static/processed_data.csv',
+                     parse_dates=['time'], date_format="%m/%d")
 
     # 各候選人聲量長條圖
-    #drawPrincipalVolumeBar(df)
+    # drawPrincipalVolumeBar(df)
 
     # 各候選人聲量折線圖(趨勢圖)
-    #drawPrincipalVolumeLine(df)
+    # drawPrincipalVolumeLine(df)
 
     # 各候選人情緒長條圖
-    #drawPrincipalSentimentBar(df)
+    # drawPrincipalSentimentBar(df)
 
     # 各候選人情緒折線圖(趨勢圖)
-    #drawPrincipalSentimentLine(df)
+    # drawPrincipalSentimentLine(df)
 
     # 各候選人聲量與情緒比較圖(象限圖)
-    drawPrincipalVolumeAndSentimentScatter(df)
+    # drawPrincipalVolumeAndSentimentScatter(df)
 
     # 各候選人與關鍵字聲量比較折現圖
-    #drawPrincipalCustomKeywordLine(df)
+    # drawPrincipalCustomKeywordLine(df)
 
     # 各候選人與關鍵字情緒之知覺圖
-    #drawPrincipalCustomKeywordSentimentScatter(df)
+    # drawPrincipalCustomKeywordSentimentScatter(df)
 
     # 自訂關鍵字聲量與情緒分群比較折線圖
-    #drawPrincipalCustomKeywordSegimentsGroupLine(df)
+    drawPrincipalCustomKeywordSegimentsGroupLine(df)
+
 
 if __name__ == '__main__':
-  #getProcessedData()
-  getProcessedDataChart()
+    # getProcessedData()
+    getProcessedDataChart()

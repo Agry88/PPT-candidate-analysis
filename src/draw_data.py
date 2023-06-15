@@ -178,7 +178,7 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
     copyDataframe = dataframe.copy()
 
     # 自訂關鍵字
-    customKeywords = ["賄選", "台獨", "民調", "造勢", "連任", "總統大選", "黨內聲量", "民意聲量", "網路聲量"]
+    customKeywords = ["台獨", "經濟", "治安", "能源", "房價", "環境", "親中"]
 
     # 計算每一個關鍵字的聲量
     for keyword in customKeywords:
@@ -222,8 +222,8 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
         print('Silhouette Score for %i Clusters: %0.4f' % (k, silhouette_avg))
 
 
-    # 最後決定分成4群
-    clustering = KMeans(n_clusters=4,random_state=1, n_init='auto').fit(volume_cluster)  
+    # 最後決定分成3群
+    clustering = KMeans(n_clusters=3,random_state=1, n_init='auto').fit(volume_cluster)  
 
     # 將分群結果加入原始資料
     volume_cluster['cluster'] = clustering.labels_
@@ -245,14 +245,16 @@ def drawPrincipalCustomKeywordSegimentsGroupLine(dataframe: pd.DataFrame):
     plt.show()
 
     # 繪製群體各關鍵字聲量圖
-    for keyword in customKeywords:
-        if keyword not in volume_cluster_group.columns:
-            continue
-        plt.plot(volume_cluster_group['cluster'], volume_cluster_group[keyword], label=keyword)
-    chart_title = '各群體關鍵字聲量'
+    # X軸是關鍵字 Y軸是聲量
+    columns = volume_cluster_group.columns.drop(['cluster', '人數'])
+    plt.plot(columns, volume_cluster_group.iloc[0].drop(['cluster', '人數']), label='政治狂熱派')
+    plt.plot(columns, volume_cluster_group.iloc[1].drop(['cluster', '人數']), label='台獨重視派')
+    plt.plot(columns, volume_cluster_group.iloc[2].drop(['cluster', '人數']), label='政治中立派')
     plt.legend()
+    chart_title = '各群體關鍵字聲量'
     plt.title(chart_title)
-    plt.xlabel('群體')
+    plt.xlabel('關鍵字')
     plt.ylabel('聲量')
     plt.savefig(f'./static/result_charts/{chart_title}.png')
     plt.show()
+    
